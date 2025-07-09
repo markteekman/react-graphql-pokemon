@@ -1,0 +1,38 @@
+import { useQuery, gql } from "@apollo/client";
+import PokeCard from "./PokeCard";
+import "./App.css";
+
+const GET_POKEMON = gql`
+  query GetPokemon {
+    pokemon(
+      where: {
+        name: { _in: ["bulbasaur", "squirtle", "charmander", "pikachu"] }
+      }
+    ) {
+      id
+      name
+    }
+  }
+`;
+
+function App() {
+  const { loading, error, data } = useQuery(GET_POKEMON);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  return (
+    <>
+      <h1>Choose your starter</h1>
+      <ul>
+        {data.pokemon.map((pokemon: { id: string; name: string }) => {
+          return (
+            <PokeCard key={pokemon.id} name={pokemon.name} id={pokemon.id} />
+          );
+        })}
+      </ul>
+    </>
+  );
+}
+
+export default App;
